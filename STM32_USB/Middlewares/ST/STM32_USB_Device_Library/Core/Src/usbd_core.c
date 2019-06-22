@@ -19,7 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_core.h"
-
+#include "includes.h"
 /** @addtogroup STM32_USBD_DEVICE_LIBRARY
 * @{
 */
@@ -262,21 +262,27 @@ USBD_StatusTypeDef USBD_LL_SetupStage(USBD_HandleTypeDef *pdev, uint8_t *psetup)
 {
   USBD_ParseSetupRequest(&pdev->request, psetup);
 
+  usb_printf("Setup Request: ");
+	usb_puthex((const char*)psetup,12);
+	
   pdev->ep0_state = USBD_EP0_SETUP;
 
   pdev->ep0_data_len = pdev->request.wLength;
-
+  
   switch (pdev->request.bmRequest & 0x1FU)
   {
   case USB_REQ_RECIPIENT_DEVICE:
+		usb_printf("USB_REQ_DEVICE\n");
     USBD_StdDevReq (pdev, &pdev->request);
     break;
 
   case USB_REQ_RECIPIENT_INTERFACE:
+		usb_printf("USB_REQ_INTERFACE\n");
     USBD_StdItfReq(pdev, &pdev->request);
     break;
 
   case USB_REQ_RECIPIENT_ENDPOINT:
+		usb_printf("USB_REQ_ENDPOINT\n");		
     USBD_StdEPReq(pdev, &pdev->request);
     break;
 

@@ -20,6 +20,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "includes.h"
+#include "board.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -93,7 +95,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+	main_printf("Initialize all configured peripherals end.\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -165,7 +167,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 460800;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -208,7 +210,8 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+	ERR_printf(0);
+	while(1);
   /* USER CODE END Error_Handler_Debug */
 }
 

@@ -20,7 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_ctlreq.h"
 #include "usbd_ioreq.h"
-
+#include "includes.h"
 
 /** @addtogroup STM32_USBD_STATE_DEVICE_LIBRARY
   * @{
@@ -124,32 +124,38 @@ USBD_StatusTypeDef  USBD_StdDevReq (USBD_HandleTypeDef *pdev , USBD_SetupReqType
     switch (req->bRequest)
     {
     case USB_REQ_GET_DESCRIPTOR:
-
+			usb_printf("USB_REQ_GET_DESCRIPTOR\n");
       USBD_GetDescriptor (pdev, req);
       break;
 
     case USB_REQ_SET_ADDRESS:
+			usb_printf("USB_REQ_SET_ADDRESS\n");
       USBD_SetAddress (pdev, req);
       break;
 
     case USB_REQ_SET_CONFIGURATION:
+			usb_printf("USB_REQ_SET_CONFIGURATION\n");
       USBD_SetConfig (pdev, req);
       break;
 
     case USB_REQ_GET_CONFIGURATION:
+			usb_printf("USB_REQ_GET_CONFIGURATION\n");
       USBD_GetConfig (pdev, req);
       break;
 
     case USB_REQ_GET_STATUS:
+			usb_printf("USB_REQ_GET_STATUS\n");
       USBD_GetStatus (pdev, req);
       break;
 
 
     case USB_REQ_SET_FEATURE:
+			usb_printf("USB_REQ_SET_FEATURE\n");
       USBD_SetFeature (pdev, req);
       break;
 
     case USB_REQ_CLEAR_FEATURE:
+			usb_printf("USB_REQ_CLEAR_FEATURE\n");
       USBD_ClrFeature (pdev, req);
       break;
 
@@ -415,7 +421,9 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
     break;
 #endif
   case USB_DESC_TYPE_DEVICE:
+		
     pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
+		usb_printf("USB_DESC_TYPE_DEVICE len:%d\n",len); 
     break;
 
   case USB_DESC_TYPE_CONFIGURATION:
@@ -429,9 +437,11 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
       pbuf   = (uint8_t *)pdev->pClass->GetFSConfigDescriptor(&len);
       pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
     }
+		usb_printf("USB_DESC_TYPE_CONFIGURATION len:%d\n",len); 
     break;
 
   case USB_DESC_TYPE_STRING:
+		usb_printf("USB_DESC_TYPE_STRING\n"); 
     switch ((uint8_t)(req->wValue))
     {
     case USBD_IDX_LANGID_STR:
@@ -469,11 +479,11 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
     }
     break;
   case USB_DESC_TYPE_DEVICE_QUALIFIER:
-
     if(pdev->dev_speed == USBD_SPEED_HIGH)
     {
       pbuf = (uint8_t *)pdev->pClass->GetDeviceQualifierDescriptor(&len);
-      break;
+      usb_printf("USB_DESC_TYPE_DEVICE_QUALIFIER len:%d\n",len);       
+			break;
     }
     else
     {
@@ -486,7 +496,8 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
     {
       pbuf   = (uint8_t *)pdev->pClass->GetOtherSpeedConfigDescriptor(&len);
       pbuf[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
-      break;
+     	usb_printf("USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION len:%d\n",len);      
+			break;
     }
     else
     {
@@ -535,6 +546,7 @@ static void USBD_SetAddress(USBD_HandleTypeDef *pdev ,
     }
     else
     {
+			usb_printf("[FUN]USBD_SetAddress:0x%x\n",dev_addr);
       pdev->dev_address = dev_addr;
       USBD_LL_SetUSBAddress(pdev, dev_addr);
       USBD_CtlSendStatus(pdev);
@@ -768,7 +780,7 @@ void USBD_ParseSetupRequest(USBD_SetupReqTypedef *req, uint8_t *pdata)
   req->wValue        = SWAPBYTE      (pdata +  2);
   req->wIndex        = SWAPBYTE      (pdata +  4);
   req->wLength       = SWAPBYTE      (pdata +  6);
-
+  
 }
 
 /**
@@ -784,6 +796,7 @@ void USBD_CtlError( USBD_HandleTypeDef *pdev ,
 {
   USBD_LL_StallEP(pdev , 0x80U);
   USBD_LL_StallEP(pdev , 0U);
+	ERR_printf(0);
 }
 
 

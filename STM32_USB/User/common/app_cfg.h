@@ -3,44 +3,23 @@
 #include "SEGGER_RTT.h"
 #include "stdio.h"
 
-#define __ASSERT_PARAM
+
 
 #define DBUG_Printf 	printf		// MY_RTT_printf
 #define DBUG_Put_hex 	my_printhex	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //====== ERR  =========//
 #define ERR_printf(res)		 DBUG_Printf("[%d][ERR][%s] Res: %d\n",__LINE__,__func__,res)
 
 
 
+//== ENABLE ASEERT  ===//
+#define __ASSERT_PARAM
+
+
+
 //======= USER =======//
 #define DBUG_MAIN	
-#define DBUG_TASK_MANAGE
 
 #ifdef DBUG_MAIN
 #define main_printf		DBUG_Printf
@@ -48,18 +27,23 @@
 #define main_printf(...)
 #endif
 
-#ifdef DBUG_TASK_MANAGE
-#define task_printf		DBUG_Printf
-#else
-#define main_printf(...)
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 //======= BSP =======//
-
 #define __DBUG_BSP
-
 #ifdef __DBUG_BSP
 #define bsp_printf		DBUG_Printf
 #define bsp_puthex		DBUG_Put_hex
@@ -68,10 +52,23 @@
 #define bsp_puthex(...)	
 #endif
 
+#define __DBUG_USB
+#ifdef __DBUG_USB
+#define usb_printf		DBUG_Printf
+#define usb_puthex		DBUG_Put_hex
+#else
+#define usb_printf(...)
+#define usb_puthex(...)	
+#endif
+
+
+
+
+
 
 //======= DEV =======//
 #define __DBUG_DEV_SPI_SD
-#define __DBUG_SPI_FLASH
+#define __DBUG_DEV_SPI_FLASH
 
 
 #ifdef __DBUG_DEV_SPI_SD
@@ -83,7 +80,7 @@
 #endif
 
 
-#ifdef __DBUG_SPI_FLASH
+#ifdef __DBUG_DEV_SPI_FLASH
 #define flash_printf		DBUG_Printf
 #define flash_puthex		DBUG_Put_hex
 #else
