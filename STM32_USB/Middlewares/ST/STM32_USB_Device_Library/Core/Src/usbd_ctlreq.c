@@ -116,46 +116,48 @@ USBD_StatusTypeDef  USBD_StdDevReq (USBD_HandleTypeDef *pdev , USBD_SetupReqType
   {
   case USB_REQ_TYPE_CLASS:
   case USB_REQ_TYPE_VENDOR:
+	usb_printf("REQ Type	-----	CLASS,VENDOR\n");
     pdev->pClass->Setup(pdev, req);
     break;
 
   case USB_REQ_TYPE_STANDARD:
-
+    usb_printf("REQ Type	-----	STANDARD\n");
+    usb_printf("REQ Code	----- 	%d :",req->bRequest);
     switch (req->bRequest)
     {
     case USB_REQ_GET_DESCRIPTOR:
-			usb_printf("USB_REQ_GET_DESCRIPTOR\n");
+	  usb_printf("GET_DESCRIPTOR\n");
       USBD_GetDescriptor (pdev, req);
       break;
 
     case USB_REQ_SET_ADDRESS:
-			usb_printf("USB_REQ_SET_ADDRESS\n");
+	  usb_printf("SET_ADDRESS\n");
       USBD_SetAddress (pdev, req);
       break;
 
     case USB_REQ_SET_CONFIGURATION:
-			usb_printf("USB_REQ_SET_CONFIGURATION\n");
+	  usb_printf("SET_CONFIGURATION\n");
       USBD_SetConfig (pdev, req);
       break;
 
     case USB_REQ_GET_CONFIGURATION:
-			usb_printf("USB_REQ_GET_CONFIGURATION\n");
+	  usb_printf("GET_CONFIGURATION\n");
       USBD_GetConfig (pdev, req);
       break;
 
     case USB_REQ_GET_STATUS:
-			usb_printf("USB_REQ_GET_STATUS\n");
+	  usb_printf("GET_STATUS\n");
       USBD_GetStatus (pdev, req);
       break;
 
 
     case USB_REQ_SET_FEATURE:
-			usb_printf("USB_REQ_SET_FEATURE\n");
+	  usb_printf("SET_FEATURE\n");
       USBD_SetFeature (pdev, req);
       break;
 
     case USB_REQ_CLEAR_FEATURE:
-			usb_printf("USB_REQ_CLEAR_FEATURE\n");
+	  usb_printf("CLEAR_FEATURE\n");
       USBD_ClrFeature (pdev, req);
       break;
 
@@ -412,7 +414,7 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
   uint16_t len;
   uint8_t *pbuf;
 
-
+  usb_printf("Descriptor type	-----	%d:",req->wValue >> 8); 
   switch (req->wValue >> 8)
   {
 #if (USBD_LPM_ENABLED == 1U)
@@ -423,7 +425,7 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
   case USB_DESC_TYPE_DEVICE:
 		
     pbuf = pdev->pDesc->GetDeviceDescriptor(pdev->dev_speed, &len);
-		usb_printf("USB_DESC_TYPE_DEVICE len:%d\n",len); 
+		usb_printf("DEVICE len:%d\n",len); 
     break;
 
   case USB_DESC_TYPE_CONFIGURATION:
@@ -437,11 +439,11 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
       pbuf   = (uint8_t *)pdev->pClass->GetFSConfigDescriptor(&len);
       pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
     }
-		usb_printf("USB_DESC_TYPE_CONFIGURATION len:%d\n",len); 
+	usb_printf("CONFIGURATION len:%d\n",len); 
     break;
 
   case USB_DESC_TYPE_STRING:
-		usb_printf("USB_DESC_TYPE_STRING\n"); 
+	usb_printf("STRING\n"); 
     switch ((uint8_t)(req->wValue))
     {
     case USBD_IDX_LANGID_STR:
@@ -482,7 +484,7 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
     if(pdev->dev_speed == USBD_SPEED_HIGH)
     {
       pbuf = (uint8_t *)pdev->pClass->GetDeviceQualifierDescriptor(&len);
-      usb_printf("USB_DESC_TYPE_DEVICE_QUALIFIER len:%d\n",len);       
+      usb_printf("DEVICE_QUALIFIER len:%d\n",len);       
 			break;
     }
     else
@@ -496,7 +498,7 @@ static void USBD_GetDescriptor(USBD_HandleTypeDef *pdev ,
     {
       pbuf   = (uint8_t *)pdev->pClass->GetOtherSpeedConfigDescriptor(&len);
       pbuf[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
-     	usb_printf("USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION len:%d\n",len);      
+     	usb_printf("OTHER_SPEED_CONFIGURATION len:%d\n",len);      
 			break;
     }
     else
@@ -546,7 +548,7 @@ static void USBD_SetAddress(USBD_HandleTypeDef *pdev ,
     }
     else
     {
-			usb_printf("[FUN]USBD_SetAddress:0x%x\n",dev_addr);
+	  usb_printf("[FUN]USBD_SetAddress:0x%x\n",dev_addr);
       pdev->dev_address = dev_addr;
       USBD_LL_SetUSBAddress(pdev, dev_addr);
       USBD_CtlSendStatus(pdev);
@@ -580,6 +582,8 @@ static void USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 
   cfgidx = (uint8_t)(req->wValue);
 
+  usb_printf("CFG Value	-----	%d\n",cfgidx);
+  usb_printf("pdev_state	-----	%d\n",pdev->dev_state);
   if (cfgidx > USBD_MAX_NUM_CONFIGURATION)
   {
     USBD_CtlError(pdev, req);
